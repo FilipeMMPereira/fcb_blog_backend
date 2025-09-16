@@ -20,13 +20,19 @@ public class CategoryModel implements Serializable {
     @Setter(AccessLevel.NONE)
     private int id;
 
-    private String title;
+    @Column(nullable = false, unique = true)
+    private String name;
 
-    @Lob
     private String description;
 
+    @Column(nullable = false, unique = true)
+    private String slug;
 
-    private String imageUrl;
+//    @Lob
+//    private String description;
+//
+//
+//    private String imageUrl;
 
 //    @ManyToMany(mappedBy = "posts")
 //    private Set<PostModel> posts;
