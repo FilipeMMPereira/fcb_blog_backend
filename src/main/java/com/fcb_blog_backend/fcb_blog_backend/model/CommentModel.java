@@ -8,21 +8,21 @@ import lombok.Setter;
 
 @Entity
 @Data
-@Table(name = "posts")
+@Table(name = "comments")
 @NoArgsConstructor
-public class PostModel {
+public class CommentModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter(AccessLevel.NONE)
     private int id;
 
-    private String title;
-    private String image;
-
-    @Lob
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private CategoryModel category;
+    @JoinColumn(name = "user_id")
+    private UserModel user;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private PostModel post;
 }

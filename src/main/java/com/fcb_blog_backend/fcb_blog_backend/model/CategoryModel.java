@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -28,6 +30,8 @@ public class CategoryModel implements Serializable {
     @Column(nullable = false, unique = true)
     private String slug;
 
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PostModel> posts = new ArrayList<>();
 //    @Lob
 //    private String description;
 //

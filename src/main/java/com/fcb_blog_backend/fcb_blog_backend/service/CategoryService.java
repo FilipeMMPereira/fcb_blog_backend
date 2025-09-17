@@ -10,10 +10,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
+
+    public ResponseEntity<List<CategoryModel>> getAll() {
+        List<CategoryModel> list = categoryRepository.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+//    public ResponseEntity<List<CategoryModel>> getBySlug(String slug) {
+//
+//    }
 
     public ResponseEntity<MessageDTO> create(CategoryCreateReqDTO body){
             if(categoryRepository.existsByName(body.name()) || categoryRepository.existsBySlug(body.slug())){
@@ -26,4 +37,10 @@ public class CategoryService {
             categoryRepository.save(category);
             return ResponseEntity.status(HttpStatus.CREATED).body(new MessageDTO("Category created successfully"));
     }
+
+//    public ResponseEntity<MessageDTO> update(int id, CategoryCreateReqDTO body){
+//        if(categoryRepository.exitsById(id)){
+//            CategoryModel category = categoryRepository.findById(id).get();
+//        }
+//    }
 }
