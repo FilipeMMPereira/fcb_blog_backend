@@ -30,6 +30,7 @@ public class UserService {
 
         UserModel user = new UserModel();
         user.setEmail(userDTO.email());
+        user.setName(userDTO.name());
         user.setPassword(passwordEncoder.encode(userDTO.password()));
         user.setAdmin("ADMIN".equalsIgnoreCase(userDTO.role()));
 

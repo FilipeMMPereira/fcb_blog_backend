@@ -62,7 +62,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/users/register", "/api/users/login", 
                                "/swagger-ui.html", "/swagger-ui/**", 
-                               "/v3/api-docs/**", "/public/**").permitAll()
+                               "/v3/api-docs/**", "/public/**","/uploads/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
@@ -75,4 +75,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }

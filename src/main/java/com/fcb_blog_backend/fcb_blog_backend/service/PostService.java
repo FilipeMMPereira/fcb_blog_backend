@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.text.Normalizer;
@@ -19,10 +20,14 @@ import java.util.regex.Pattern;
 
 @Service
 public class PostService {
- @Autowired
- private PostRepository postRepository;
- @Autowired
- private CategoryRepository categoryRepository;
+    @Autowired
+    private PostRepository postRepository;
+    
+    @Autowired
+    private CategoryRepository categoryRepository;
+    
+    @Autowired
+    private FileStorageService fileStorageService;
 
  private String generateSlug(String input) {
      String normalized = Normalizer.normalize(input, Normalizer.Form.NFD)
@@ -34,18 +39,28 @@ public class PostService {
  }
 
  public ResponseEntity<MessageDTO> create(PostCreateReqDTO body) {
-     CategoryModel category = categoryRepository.findById(body.categoryId())
-             .orElseThrow(() -> new EntityNotFoundException("Category not found: " + body.categoryId()));
-     
-     PostModel post = new PostModel();
-     post.setTitle(body.title());
-     post.setImage(body.image());
-     post.setCategory(category);
-     post.setSlug(generateSlug(body.title()));
-     post.setCreatedAt(LocalDateTime.now());
-     
-     postRepository.save(post);
-     return ResponseEntity.status(HttpStatus.CREATED).body(new MessageDTO("Post created successfully!"));
+     try {
+         CategoryModel category = categoryRepository.findById(body.categoryId())
+                 .orElseThrow(() -> new EntityNotFoundException("Category not found: " + body.categoryId()));
+
+         // Save the image file and get its filename
+         String imageName = fileStorageService.storeFile(body.image());
+         
+         PostModel post = new PostModel();
+         post.setTitle(body.title());
+         post.setContent(body.content());
+         post.setImage(imageName);
+         post.setCategory(category);
+         post.setSlug(generateSlug(body.title()));
+         post.setCreatedAt(LocalDateTime.now());
+         
+         postRepository.save(post);
+         return ResponseEntity.status(HttpStatus.CREATED)
+                 .body(new MessageDTO("Post created successfully!"));
+     } catch (IOException e) {
+         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                 .body(new MessageDTO("Failed to upload image: " + e.getMessage()));
+     }
  }
 
  public ResponseEntity<List<PostModel>> getAll(){

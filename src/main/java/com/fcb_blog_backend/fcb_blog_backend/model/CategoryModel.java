@@ -30,8 +30,8 @@ public class CategoryModel implements Serializable {
     @Column(nullable = false, unique = true)
     private String slug;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PostModel> posts = new ArrayList<>();
+//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<PostModel> posts = new ArrayList<>();
 //    @Lob
 //    private String description;
 //

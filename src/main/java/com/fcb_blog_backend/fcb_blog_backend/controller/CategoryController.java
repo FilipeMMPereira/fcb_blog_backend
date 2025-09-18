@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @Tag(name= "Categories", description = "Categories Management")
 @RequestMapping("/public/category")
+@CrossOrigin(origins = "*")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;

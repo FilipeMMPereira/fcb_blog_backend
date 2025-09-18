@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @Tag(name = "Comments", description = "Comments Management")
 @RequestMapping("public/comments")
+@CrossOrigin(origins = "*")
 public class CommentController {
     @Autowired
     private CommentService commentService;
