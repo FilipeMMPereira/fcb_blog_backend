@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @Table(name = "posts")
@@ -17,10 +19,18 @@ public class PostModel {
     private int id;
 
     private String title;
+    
+    @Column(unique = true)
+    private String slug;
+    
     private String image;
 
     @Lob
     private String content;
+    
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

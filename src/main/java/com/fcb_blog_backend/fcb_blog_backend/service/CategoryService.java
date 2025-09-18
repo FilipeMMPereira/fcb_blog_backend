@@ -10,12 +10,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.Normalizer;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
+
+    private String generateSlug(String input) {
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "")
+                .toLowerCase()
+                .replaceAll("[^a-z0-9\\s-]", "")
+                .replaceAll("\\s+", "-");
+        return Pattern.compile("-+").matcher(normalized).replaceAll("-");
+    }
 
     public ResponseEntity<List<CategoryModel>> getAll() {
         List<CategoryModel> list = categoryRepository.findAll();
@@ -27,12 +38,10 @@ public class CategoryService {
 //    }
 
     public ResponseEntity<MessageDTO> create(CategoryCreateReqDTO body){
-            if(categoryRepository.existsByName(body.name()) || categoryRepository.existsBySlug(body.slug())){
-                throw new EntityExistsException("Category already exists");
-            }
+
             CategoryModel category = new CategoryModel();
             category.setName(body.name());
-            category.setSlug(body.slug());
+            category.setSlug(generateSlug(body.name()));
             category.setDescription(body.description());
             categoryRepository.save(category);
             return ResponseEntity.status(HttpStatus.CREATED).body(new MessageDTO("Category created successfully"));
