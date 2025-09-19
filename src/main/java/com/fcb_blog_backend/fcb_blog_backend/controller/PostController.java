@@ -34,4 +34,10 @@ public class PostController {
     public ResponseEntity<List<PostModel>> getAll(){
         return postService.getAll();
     }
+
+    @GetMapping("/{slug}")
+    @Operation(summary = "Get post", description = "Return post to client")
+    public ResponseEntity<PostModel> findPost(@PathVariable("slug") String slug){
+        return postService.findPost(slug);
+    }
 }

@@ -22,49 +22,54 @@ import java.util.regex.Pattern;
 public class PostService {
     @Autowired
     private PostRepository postRepository;
-    
+
     @Autowired
     private CategoryRepository categoryRepository;
-    
+
     @Autowired
     private FileStorageService fileStorageService;
 
- private String generateSlug(String input) {
-     String normalized = Normalizer.normalize(input, Normalizer.Form.NFD)
-             .replaceAll("[^\\p{ASCII}]", "")
-             .toLowerCase()
-             .replaceAll("[^a-z0-9\\s-]", "")
-             .replaceAll("\\s+", "-");
-     return Pattern.compile("-+").matcher(normalized).replaceAll("-");
- }
+    private String generateSlug(String input) {
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "")
+                .toLowerCase()
+                .replaceAll("[^a-z0-9\\s-]", "")
+                .replaceAll("\\s+", "-");
+        return Pattern.compile("-+").matcher(normalized).replaceAll("-");
+    }
 
- public ResponseEntity<MessageDTO> create(PostCreateReqDTO body) {
-     try {
-         CategoryModel category = categoryRepository.findById(body.categoryId())
-                 .orElseThrow(() -> new EntityNotFoundException("Category not found: " + body.categoryId()));
+    public ResponseEntity<MessageDTO> create(PostCreateReqDTO body) {
+        try {
+            CategoryModel category = categoryRepository.findById(body.categoryId())
+                    .orElseThrow(() -> new EntityNotFoundException("Category not found: " + body.categoryId()));
 
-         // Save the image file and get its filename
-         String imageName = fileStorageService.storeFile(body.image());
-         
-         PostModel post = new PostModel();
-         post.setTitle(body.title());
-         post.setContent(body.content());
-         post.setImage(imageName);
-         post.setCategory(category);
-         post.setSlug(generateSlug(body.title()));
-         post.setCreatedAt(LocalDateTime.now());
-         
-         postRepository.save(post);
-         return ResponseEntity.status(HttpStatus.CREATED)
-                 .body(new MessageDTO("Post created successfully!"));
-     } catch (IOException e) {
-         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                 .body(new MessageDTO("Failed to upload image: " + e.getMessage()));
-     }
- }
+            // Save the image file and get its filename
+            String imageName = fileStorageService.storeFile(body.image());
 
- public ResponseEntity<List<PostModel>> getAll(){
-     List<PostModel> posts = postRepository.findAll();
-     return ResponseEntity.status(HttpStatus.OK).body(posts);
- }
+            PostModel post = new PostModel();
+            post.setTitle(body.title());
+            post.setContent(body.content());
+            post.setImage(imageName);
+            post.setCategory(category);
+            post.setSlug(generateSlug(body.title()));
+            post.setCreatedAt(LocalDateTime.now());
+
+            postRepository.save(post);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new MessageDTO("Post created successfully!"));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageDTO("Failed to upload image: " + e.getMessage()));
+        }
+    }
+
+    public ResponseEntity<List<PostModel>> getAll() {
+        List<PostModel> posts = postRepository.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
+    }
+
+    public ResponseEntity<PostModel> findPost(String slug) {
+        PostModel post = postRepository.findBySlug(slug);
+        return ResponseEntity.status(HttpStatus.OK).body(post);
+    }
 }
