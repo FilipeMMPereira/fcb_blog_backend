@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -38,6 +39,7 @@ public class CommentService {
         comment.setContent(body.content());
         comment.setPost(post);
         comment.setUser(user);
+        comment.setCreatedAt(LocalDateTime.now());
         
         commentRepository.save(comment);
         return ResponseEntity.status(HttpStatus.CREATED).body(new MessageDTO("Comment created successfully!"));
