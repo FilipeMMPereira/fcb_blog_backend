@@ -35,7 +35,7 @@ API RESTful para sistema de blog desenvolvida com Spring Boot, oferecendo endpoi
 
 ### 1. Clone o Repositório
 ```bash
-git clone [URL_DO_REPOSITORIO]
+git clone https://github.com/FilipeMMPereira/fcb_blog_backend.git
 cd fcb_blog_backend
 ```
 
